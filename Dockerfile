@@ -16,6 +16,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends -y --force-ye
 RUN echo "host all all 0.0.0.0/0 md5" >> /etc/postgresql/9.3/main/pg_hba.conf
 RUN echo "listen_addresses = '*'" >> /etc/postgresql/9.3/main/postgresql.conf
 
+# Remove data directory so it will be reinitialized for each container
+RUN rm -rf /var/lib/postgresql/9.3/main
+
 # Install startup script
 ADD start.sh /meta/start.sh
 CMD ["/meta/start.sh"]

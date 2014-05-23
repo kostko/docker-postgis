@@ -12,11 +12,13 @@ if [ ! -d $DATADIR ]; then
 fi
 
 # Test if DATADIR has content
-if [ ! "$(ls -A $DATADIR)" ]; then
-  echo "Initializing PostgreSQL Database at $DATADIR"
-  chown -R postgres $DATADIR
-  sudo -u postgres $INITDB $DATADIR
+if [ ! -f $DATADIR/PG_VERSION ]; then
+  echo "Initializing PostgreSQL database at $DATADIR"
+  chown postgres:postgres $DATADIR
+  chmod 700 $DATADIR
+  sudo -u postgres $INITDB -E UNICODE -D $DATADIR
   sudo -u postgres $POSTGRES --single -D $DATADIR -c config_file=$CONF <<< "CREATE USER $PGSQL_SUPERUSER_USERNAME WITH SUPERUSER PASSWORD '$PGSQL_SUPERUSER_PASSWORD';"
+  echo "PostgreSQL database initialized."
 fi
 
 # Start PostgreSQL
